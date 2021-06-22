@@ -13,7 +13,7 @@ class BrainJournal_Shortcode
         add_shortcode("brainjournal", [$this, "setup_shortcode"]);
         $this->REST_NAMESPACE = $constants::REST_NAMESPACE;
 
-        // Include your css file
+        // Include the css file
         add_action("wp_enqueue_scripts", [$this, "include_css"]);
     }
 
@@ -52,7 +52,7 @@ class BrainJournal_Shortcode
      */
     function output_shortcode($has_legend)
     {
-?>
+    ?>
         <div id="graph">
             <svg width="400" height="400"></svg>
         </div>

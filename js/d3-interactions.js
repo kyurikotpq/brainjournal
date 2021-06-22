@@ -1,3 +1,6 @@
+/**
+ * Helper functions for tooltips
+ */
 const BrowserText = (function () {
   const canvas = document.createElement("canvas"),
     context = canvas.getContext("2d");
@@ -42,6 +45,9 @@ const determineWidthFromTitle = (title) => {
   return width + 4;
 };
 
+/**
+ * D3 Interactions
+ */
 class D3Interactions {
   constructor() {
     this.svgWidth = 400;
@@ -70,6 +76,7 @@ class D3Interactions {
       .on("end", () => this.ended(this.d3Node, this.d3Link));
 
     this.svg = svg;
+    this.nodeColors = d3.scaleOrdinal();
 
     // Make the height responsive to the screen
     // svgHeight = $refs.svg_container.clientHeight;
@@ -83,9 +90,21 @@ class D3Interactions {
     });
   }
 
+  setupColors(node_colors) {
+    // Node Colors
+    const domain = [];
+    const colors = [];
+    for (let category_id in node_colors) {
+      domain.push(category_id);
+      colors.push(node_colors[category_id]);
+    }
+    this.nodeColors = d3.scaleOrdinal().domain(domain).range(colors);
+  }
+
   formGraph(result) {
-    const { links, nodes } = result;
+    const { links, nodes, node_colors } = result;
     this.formConnections(links);
+    this.setupColors(node_colors);
 
     // Initialize the links
     this.d3Link = this.d3Link.data(links);
@@ -160,10 +179,12 @@ class D3Interactions {
     d3Node
       .selectAll("circle")
       .attr("data-href", (d) => d.href)
-      // .attr("fill", note => this.nodeColors(note.notetype))
-      // .attr("stroke", note => this.nodeColors(note.notetype))
+      .attr("fill", (note) => this.nodeColors(note.category))
+      .attr("stroke", (note) => this.nodeColors(note.category))
       .attr("id", (note) => note.id)
-      .on("mouseover", (e) => this.mouseOver(e, this.isConnected, this.d3Connections, d3Node, d3Link))
+      .on("mouseover", (e) =>
+        this.mouseOver(e, this.isConnected, this.d3Connections, d3Node, d3Link)
+      )
       .on("mouseout", (e) => this.mouseOut(d3Node, d3Link))
       .on("click", (e) => this.nodeClick(e, this.isConnected, d3Node, d3Link));
   }
