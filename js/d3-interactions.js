@@ -64,7 +64,7 @@ class D3Interactions {
         "link",
         d3.forceLink().id((node) => node.id)
       ) // pull nodes together based on the links between them
-      .force("collide", d3.forceCollide().radius(35)) // add some collision detection so they don't overlap
+      .force("collide", d3.forceCollide().radius(45)) // add some collision detection so they don't overlap
       .force("center", d3.forceCenter(this.svgWidth / 2, this.svgHeight / 2)) // Draw nodes around the center of the svg area
       .on("tick", () => this.tick(this.d3Node, this.d3Link))
       .on("end", () => this.ended(this.d3Node, this.d3Link));
@@ -159,7 +159,7 @@ class D3Interactions {
     // Add mouse interactions
     d3Node
       .selectAll("circle")
-      .attr("class", (d) => d.notetype)
+      .attr("data-href", (d) => d.href)
       // .attr("fill", note => this.nodeColors(note.notetype))
       // .attr("stroke", note => this.nodeColors(note.notetype))
       .attr("id", (note) => note.id)
@@ -177,8 +177,8 @@ class D3Interactions {
   // Mouse events!
   // fade nodes on hover
   nodeClick(e) {
-    if (e.target.id && e.target.classList.length > 0 && e.metaKey) {
-      const notetype = e.target.classList[0];
+    if (e.target.id && e.target.dataset.href && e.metaKey) {
+      window.location.href = e.target.dataset.href;
     }
   }
 

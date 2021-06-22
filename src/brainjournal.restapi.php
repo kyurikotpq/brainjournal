@@ -13,7 +13,7 @@ class BrainJournal_RestAPI
         $this->REST_NAMESPACE = $constants::REST_NAMESPACE;
         $this->get_all_links_query = "SELECT * FROM {$constants->table_prefix}brainjournal_links;";
         $this->get_all_nodes_query = "
-            SELECT DISTINCT(ID) as id, post_title as title FROM {$constants->table_prefix}posts
+            SELECT DISTINCT(ID) AS id, post_title AS title, guid AS href FROM {$constants->table_prefix}posts
             WHERE id IN (SELECT DISTINCT(source) FROM {$constants->table_prefix}brainjournal_links)
             OR id IN (SELECT DISTINCT(target) FROM {$constants->table_prefix}brainjournal_links);
         ";
