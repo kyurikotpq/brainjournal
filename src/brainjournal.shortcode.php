@@ -17,6 +17,11 @@ class BrainJournal_Shortcode
         add_action("wp_enqueue_scripts", [$this, "include_css"]);
     }
 
+    function include_css()
+    {
+        wp_enqueue_style("brainjournal-d3", BRAINJOURNAL_PLUGIN_URL . "/css/d3.css");
+    }
+
     /**
      * Called when the user uses the shortcode.
      * 
@@ -29,47 +34,26 @@ class BrainJournal_Shortcode
     function setup_shortcode($atts)
     {
         $attributes = shortcode_atts([
-            'has_legend' => true,
+            'radius' => 5,
         ], $atts);
 
         // Include code to make the AJAX call to your REST endpoint
-        add_action("wp_footer", [$this, "output_javascript"]);
+        add_action("wp_footer", function () use ($attributes) {
+            $this->output_javascript(intval($attributes["radius"]));
+        });
 
-        // Output HTML markup for D3 to work
-        $this->output_shortcode($attributes["has_legend"]);
-    }
-
-    function include_css()
-    {
-        wp_enqueue_style("brainjournal-d3", BRAINJOURNAL_PLUGIN_URL . "/css/d3.css");
-    }
-
-    /**
-     * You should call this function to output your HTML markup
-     * 
-     * Do NOT query from the database here as that should be
-     * handled by your REST API endpoint in brainjournal.restapi.php
-     */
-    function output_shortcode($has_legend)
-    {
-    ?>
-        <div id="graph">
-            <svg width="400" height="400"></svg>
-        </div>
-    <?php
-    }
-
-    function include_javascript()
-    {
+        // Return HTML markup for D3 to work
+        $markup = '<div id="graph"><svg width="400" height="400"></svg></div>';
+        return $markup;
     }
 
     /**
      * Apart from including d3.min.js, d3-interactions.js files,
      * you need to write the JS code to do the AJAX call to your REST API endpoint
      */
-    function output_javascript()
+    function output_javascript($radius)
     {
-    ?>
+?>
         <script type="text/javascript" src="<?php echo BRAINJOURNAL_PLUGIN_URL; ?>/js/d3.min.js"></script>
         <script type="text/javascript" src="<?php echo BRAINJOURNAL_PLUGIN_URL; ?>/js/d3-interactions.js"></script>
         <script>
@@ -87,7 +71,7 @@ class BrainJournal_Shortcode
 
                         // Call the D3 Setup function
                         const d3Interactions = new D3Interactions();
-                        d3Interactions.formGraph(data);
+                        d3Interactions.formGraph(data, <?php echo $radius; ?>);
                     }
                 }
                 xhr.open('GET', GET_ALL_LINKS_URL);

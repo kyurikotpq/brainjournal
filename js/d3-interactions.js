@@ -101,7 +101,7 @@ class D3Interactions {
     this.nodeColors = d3.scaleOrdinal().domain(domain).range(colors);
   }
 
-  formGraph(result) {
+  formGraph(result, circleRadius) {
     const { links, nodes, node_colors } = result;
     this.formConnections(links);
     this.setupColors(node_colors);
@@ -116,7 +116,7 @@ class D3Interactions {
     this.d3Node.exit().remove();
     const d3Node = this.d3Node.enter().append("g");
 
-    const circle = d3Node.append("circle").attr("r", 10);
+    const circle = d3Node.append("circle").attr("r", circleRadius);
 
     const tooltipContainer = d3Node.append("svg").attr("height", 20);
 
