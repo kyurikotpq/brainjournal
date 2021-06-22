@@ -15,7 +15,7 @@ include(__DIR__ . "/src/brainjournal.restapi.php");
 include(__DIR__ . "/src/brainjournal.settings.php");
 include(__DIR__ . "/src/brainjournal.shortcode.php");
 
-define("BRAINJOURNAL_PLUGINS_URL", WP_PLUGIN_URL . "/brainjournal");
+define("BRAINJOURNAL_PLUGIN_URL", WP_PLUGIN_URL . "/brainjournal");
 
 class BrainJournal
 {
@@ -29,7 +29,7 @@ class BrainJournal
     public function __construct()
     {
         $this->constants = new BrainJournal_Constants();
-        
+
         $this->links = new BrainJournal_Links($this->constants);
         $this->restapi = new BrainJournal_RestAPI($this->constants);
         $this->settings = new BrainJournal_Settings($this->constants);

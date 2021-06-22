@@ -12,6 +12,11 @@ class BrainJournal_RestAPI
     {
         $this->REST_NAMESPACE = $constants::REST_NAMESPACE;
         $this->get_all_links_query = "SELECT * FROM {$constants->table_prefix}brainjournal_links;";
+        $this->get_all_nodes_query = "
+            SELECT DISTINCT(ID) as id, post_title as title FROM {$constants->table_prefix}posts
+            WHERE id IN (SELECT DISTINCT(source) FROM {$constants->table_prefix}brainjournal_links)
+            OR id IN (SELECT DISTINCT(target) FROM {$constants->table_prefix}brainjournal_links);
+        ";
 
         add_action('rest_api_init', [$this, 'setup_rest']);
     }
@@ -44,8 +49,14 @@ class BrainJournal_RestAPI
             $this->get_all_links_query,
             ARRAY_A
         );
-
+        
+        // Run the query to get the nodes in an associative array format
+        $nodes = $wpdb->get_results(
+            $this->get_all_nodes_query,
+            ARRAY_A
+        );
+        
         // return the data
-        return $links;
+        return ["links" => $links, "nodes" => $nodes];
     }
 }

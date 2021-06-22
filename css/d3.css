@@ -1,0 +1,33 @@
+/* SVG */
+#graph svg {
+  min-width: 400px;
+}
+#graph svg circle {
+  cursor: pointer;
+  stroke-width: 3px;
+}
+#graph svg line {
+  stroke: #aaaaaa;
+  stroke-width: 3px;
+  fill: none;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+.legend-item {
+  display: flex;
+  margin-right: 1.5rem;
+}
+.legend-item:last-child {
+  margin-right: 0;
+}
+.legend-item .circle {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}

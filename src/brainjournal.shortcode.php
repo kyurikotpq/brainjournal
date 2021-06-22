@@ -12,6 +12,9 @@ class BrainJournal_Shortcode
         // Register the shortcode in Wordpress
         add_shortcode("brainjournal", [$this, "setup_shortcode"]);
         $this->REST_NAMESPACE = $constants::REST_NAMESPACE;
+
+        // Include your css file
+        add_action("wp_enqueue_scripts", [$this, "include_css"]);
     }
 
     /**
@@ -29,14 +32,16 @@ class BrainJournal_Shortcode
             'has_legend' => true,
         ], $atts);
 
-        // Include your javascript files
-        add_action("wp_enqueue_scripts", [$this, "include_javascript"]);
-
         // Include code to make the AJAX call to your REST endpoint
         add_action("wp_footer", [$this, "output_javascript"]);
 
         // Output HTML markup for D3 to work
         $this->output_shortcode($attributes["has_legend"]);
+    }
+
+    function include_css()
+    {
+        wp_enqueue_style("brainjournal-d3", BRAINJOURNAL_PLUGIN_URL . "/css/d3.css");
     }
 
     /**
@@ -47,7 +52,7 @@ class BrainJournal_Shortcode
      */
     function output_shortcode($has_legend)
     {
-    ?>
+?>
         <div id="graph">
             <svg width="400" height="400"></svg>
         </div>
@@ -56,8 +61,6 @@ class BrainJournal_Shortcode
 
     function include_javascript()
     {
-        // wp_enqueue_script( 'brainjournal-d3', BRAINJOURNAL_PLUGINS_URL . '/js/d3.min.js');
-        // wp_enqueue_script( 'brainjournal-d3-interactions', BRAINJOURNAL_PLUGINS_URL . '/js/d3-interactions.js');
     }
 
     /**
@@ -67,25 +70,29 @@ class BrainJournal_Shortcode
     function output_javascript()
     {
     ?>
+        <script type="text/javascript" src="<?php echo BRAINJOURNAL_PLUGIN_URL; ?>/js/d3.min.js"></script>
+        <script type="text/javascript" src="<?php echo BRAINJOURNAL_PLUGIN_URL; ?>/js/d3-interactions.js"></script>
         <script>
             // Get the REST API Endpoint
-            const REST_API_ENDPOINT = document.querySelector('link[rel="https://api.w.org/"]').href;
-            const GET_ALL_LINKS_URL = REST_API_ENDPOINT + "<?php echo $this->REST_NAMESPACE; ?>/links";
-            let GRAPH_DATA = null;
+            window.onload = () => {
+                const REST_API_ENDPOINT = document.querySelector('link[rel="https://api.w.org/"]').href;
+                const GET_ALL_LINKS_URL = REST_API_ENDPOINT + "<?php echo $this->REST_NAMESPACE; ?>/links";
 
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == XMLHttpRequest.DONE) {
-                    // Parse the response and assign it to the GRAPH_DATA variable
-                    const responseText = xhr.responseText;
-                    const data = JSON.parse(responseText);
-                    GRAPH_DATA = data;
-                    
-                    // Call the D3 Setup function
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == XMLHttpRequest.DONE) {
+                        // Parse the response and assign it to the GRAPH_DATA variable
+                        const responseText = xhr.responseText;
+                        const data = JSON.parse(responseText);
+
+                        // Call the D3 Setup function
+                        const d3Interactions = new D3Interactions();
+                        d3Interactions.formGraph(data);
+                    }
                 }
+                xhr.open('GET', GET_ALL_LINKS_URL);
+                xhr.send();
             }
-            xhr.open('GET', GET_ALL_LINKS_URL);
-            xhr.send();
         </script>
 <?php
     }
