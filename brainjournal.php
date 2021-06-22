@@ -34,7 +34,7 @@ class BrainJournal
 
         $this->links = new BrainJournal_Links($this->constants);
         $this->restapi = new BrainJournal_RestAPI($this->constants);
-        $this->settings = new BrainJournal_Settings($this->constants);
+        $this->settings = new BrainJournal_Settings();
         $this->shortcode = new BrainJournal_Shortcode($this->constants);
         $this->cf7 = new BrainJournal_CF7();
 
