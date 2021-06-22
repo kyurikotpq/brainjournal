@@ -54,16 +54,22 @@ class BrainJournal_Settings
         $categories = get_categories([
             'hide_empty' => false,
         ]);
+
+        // Using $fresh_options instead of $options will help us
+        // handle updates in the categories list (deletion of category, etc.)
+        $fresh_options = [];
         foreach ($categories as $category_object) {
             if (!isset($options[$category_object->term_id])) {
-                $options[$category_object->term_id] = [
+                $fresh_options[$category_object->term_id] = [
                     "category_name" => $category_object->name,
                     "category_slug" => $category_object->slug,
                     "color" => "#000000"
                 ];
             } else {
+                // Obtain the existing color
                 $color = $options[$category_object->term_id];
-                $options[$category_object->term_id] = [
+                
+                $fresh_options[$category_object->term_id] = [
                     "category_name" => $category_object->name,
                     "category_slug" => $category_object->slug,
                     "color" => $color
@@ -76,7 +82,7 @@ class BrainJournal_Settings
         <form action="#" method="post">
             <?php
 
-            foreach ($options as $k => $option) :
+            foreach ($fresh_options as $k => $option) :
                 $id = "node_colors_" . $option["category_slug"];
                 $name = "node_colors[" . $k . "]";
 
