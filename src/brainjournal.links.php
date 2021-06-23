@@ -101,14 +101,12 @@ class BrainJournal_Links
 
         $values = $this->prepare_insert_values($original_post_ID, $post->post_content);
         
-        if (count($values) > 0) {
-            // Remove existing values
-            $wpdb->query($wpdb->prepare($this->mass_delete_query_for_post, $original_post_ID, $original_post_ID));
+        // Remove existing values
+        $wpdb->query($wpdb->prepare($this->mass_delete_query_for_post, $original_post_ID, $original_post_ID));
 
-            // Insert new values
-            $final_query = $this->mass_insert_query_start . implode(",", $values);
-            $wpdb->query($final_query);
-        }
+        // Insert new values
+        $final_query = $this->mass_insert_query_start . implode(",", $values);
+        $wpdb->query($final_query);
     }
 
 
